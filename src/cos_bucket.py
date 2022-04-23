@@ -6,8 +6,8 @@ from urllib.parse import quote
 from loguru import logger as log
 from qcloud_cos import CosServiceError
 
-from src.cos import TencentCos
-from src.exceptions import CosBucketDirNotFoundError
+from .cos import TencentCos
+from .exceptions import CosBucketDirNotFoundError
 
 REGIONS = ['nanjing', 'chengdu', 'beijing', 'guangzhou', 'shanghai', 'chongqing', 'hongkong']
 
