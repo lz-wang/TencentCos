@@ -1,11 +1,13 @@
+import hashlib
 import os
+from functools import partial
 from urllib.parse import quote
 
 from loguru import logger as log
-from pkg.tencent_cos.cos import TencentCos
-from pkg.tencent_cos.exceptions import CosBucketDirNotFoundError
-from pkg.utils.file_tools import get_file_md5sum
 from qcloud_cos import CosServiceError
+
+from src.cos import TencentCos
+from src.exceptions import CosBucketDirNotFoundError
 
 REGIONS = ['nanjing', 'chengdu', 'beijing', 'guangzhou', 'shanghai', 'chongqing', 'hongkong']
 
@@ -192,3 +194,14 @@ class TencentCosBucket(object):
         else:
             paths = object_full_path.split('/')
             return '/'.join(paths[:-1]), paths[-1]
+
+
+def get_file_md5sum(file_path: str) -> str:
+    """获取文件的md5哈希值"""
+    if not os.path.isfile(file_path):
+        raise FileNotFoundError(f'cannot found file: {file_path}')
+    with open(file_path, 'rb') as f:
+        md5hash = hashlib.md5()
+        for buffer in iter(partial(f.read, 128), b''):
+            md5hash.update(buffer)
+        return md5hash.hexdigest()
