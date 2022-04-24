@@ -4,12 +4,12 @@ from qcloud_cos import CosConfig, CosS3Client, CosServiceError
 
 class TencentCos(object):
     """腾讯云COS接口类封装
-    参考：https://cloud.tencent.com/document/product/436/12269
+    参考: https://cloud.tencent.com/document/product/436/12269
     """
 
     def __init__(self, secret_id: str, secret_key: str, region: str = 'ap-chengdu'):
-        """secret_id和secret_key获取参考：
-        https://console.cloud.tencent.com/cam/capi"""
+        """secret_id和secret_key获取
+        参考: https://console.cloud.tencent.com/cam/capi"""
         self.secret_id = secret_id
         self.secret_key = secret_key
         self.region = region
@@ -38,7 +38,7 @@ class TencentCos(object):
         """创建新的cos桶"""
         # 检查是否已存在此cos桶
         if self.check_bucket_exists(bucket_name):
-            return False, f'Bucket {bucket_name} already exists，' \
+            return False, f'Bucket {bucket_name} already exists, ' \
                           f'current bucket list -> ({", ".join(self.list_buckets())})'
 
         try:
@@ -49,8 +49,14 @@ class TencentCos(object):
         # 检测是否新建桶成功
         after_created = self.list_buckets()
         if bucket_name in after_created:
-            return True, f'Create bucket {bucket_name} success，' \
-                         f'current bucket list -> ({", ".join(after_created)})'
+            success_msg = f'Create bucket {bucket_name} success, ' \
+                          f'current bucket list -> ({", ".join(after_created)})'
+            log.success(success_msg)
+            return True, success_msg
+        else:
+            err_msg = f'Create bucket {bucket_name} failed, detail: unknown.'
+            log.error(err_msg)
+            return False, err_msg
 
     def delete_bucket(self, bucket_name):
         """删除空的cos桶"""
@@ -58,14 +64,14 @@ class TencentCos(object):
             self.client.delete_bucket(Bucket=self._fmt_b_name(bucket_name))
             success_msg = f'Delete bucket {bucket_name} success, ' \
                           f'current bucket list -> ({", ".join(self.list_buckets())})'
-            log.info(success_msg)
+            log.success(success_msg)
             return True, success_msg
         except CosServiceError as e:
-            err_msg = f'Delete bucket {bucket_name} failed，detail: {e.get_error_code()}'
+            err_msg = f'Delete bucket {bucket_name} failed,detail: {e.get_error_code()}'
             log.error(err_msg)
             return False, err_msg
         except Exception as e:
-            err_msg = f'Delete bucket {bucket_name} failed，detail: {str(e)}'
+            err_msg = f'Delete bucket {bucket_name} failed,detail: {str(e)}'
             log.error(err_msg)
             return False, err_msg
 
