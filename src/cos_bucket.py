@@ -230,7 +230,7 @@ class TencentCosBucket(object):
 
     def _get_object_url(self, remote_path: str, object_key: str):
         """获取指定对象的URL"""
-        object_url = self.base_url + quote(remote_path + object_key)
+        object_url = self.base_url + quote(remote_path + '/' + object_key)
         log.info(f'get {remote_path + object_key} url: {object_url}')
 
         return object_url
