@@ -139,7 +139,7 @@ class TencentCosBucket(object):
         """获取文件md5哈希值 https://cloud.tencent.com/document/product/436/36427"""
         response = self._get_object_info(object_full_path)
         md5hash = response.get('x-cos-meta-md5')
-        log.info(f'Bucket file: {object_full_path}, md5: {md5hash}')
+        log.debug(f'Bucket file: {object_full_path}, md5: {md5hash}')
         return md5hash
 
     def _get_object_info(self, object_full_path: str):
@@ -161,7 +161,7 @@ class TencentCosBucket(object):
     def _get_object_url(self, remote_path: str, object_key: str):
         """获取指定对象的URL"""
         object_url = self.base_url + quote(remote_path + '/' + object_key)
-        log.info(f'get {remote_path + object_key} url: {object_url}')
+        log.debug(f'get {remote_path + object_key} url: {object_url}')
 
         return object_url
 
